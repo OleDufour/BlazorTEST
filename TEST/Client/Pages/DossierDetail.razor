@@ -1,0 +1,41 @@
+﻿@page "/dossierModifier/{Id}"
+@using TEST.Server
+@inject HttpClient Http
+
+<h3>@dossier.Title</h3>
+
+<EditForm Model="dossier" OnValidSubmit="@Edit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <InputText id="Dossier" @bind-Value="dossier.Title" placeholder="Votre dossier" class="invoerveld" /><br><br>
+    <InputText id="Dossier" @bind-Value="dossier.Title" placeholder="Votre dossier" class="invoerveld" /><br><br>
+    <button type="submit" class="">Submit</button>
+</EditForm>
+
+
+
+<div class="list-group">
+    @foreach (Vote v in dossier.Vote)
+    {
+        <a href="/voteCast/@v.Id">@v.Title</a>
+
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    public Dossier dossier = new Dossier();
+    public Vote vote = new Vote();
+    protected override async Task OnInitializedAsync()
+    {
+        dossier = await Http.GetFromJsonAsync<Dossier>($"Dossier/GetDossier/{Id}");
+    }
+    private async Task Edit()
+    {
+
+        var res = await Http.PostAsJsonAsync("Dossier/Edit", dossier);
+
+    }
+
+}

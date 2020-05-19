@@ -1,0 +1,43 @@
+﻿@*@page "/Votes"
+@using BlazorAppMysql.Server
+@inject HttpClient Http
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (voteList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Sujet</th>
+                <th>Commentaire (C)</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var pr in voteList)
+            {
+                <tr>
+                    <td>@pr.Title </td>
+                    <td>@pr.Content</td>                
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Vote> voteList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        voteList = await Http.GetFromJsonAsync<List<Vote>>("Vote/GetVotes");
+    }
+
+}*@

@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/dossiers"
 @using TEST.Server
 @*@using Syncfusion.Blazor.Calendars*@
 @inject HttpClient Http
@@ -7,17 +7,23 @@
 
 
 <h2>Dossiers</h2>
-
-Tout les dossiers en cours.
-
+ 
 @*<SurveyPrompt Title="How is Blazor working for you?" />*@
 @*<SfDateTimePicker TValue="DateTime?" Placeholder='Select a date and time'></SfDateTimePicker>*@
 
-<div class="list-group">
-    @foreach (var d in dossiers)
-    {
-        <a href="/dossierModifier/@d.Id" class="list-group-item">@d.Title, @d.CreationDate.ToString("dd/MM/yyyy"), par Ole Dufour</a>
-    }
+<div class="row">
+    <div class="col-8">
+        Tous les dossiers en cours.
+        <ul class="list-group">
+            @foreach (var d in dossiers)
+            {
+                <li>  <a href="/dossierModifier/@d.Id" class="list-group-item">@d.Title, @d.CreationDate.ToString("dd/MM/yyyy"), par Ole Dufour</a></li>
+            }
+        </ul>
+    </div>
+    <div class="col-3">
+        <a href="addDossier">Créér un dossier</a>
+    </div>
 </div>
 
 

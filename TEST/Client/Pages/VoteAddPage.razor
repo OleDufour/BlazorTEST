@@ -1,0 +1,36 @@
+﻿ @page "/voteAdd/{DossierId}"
+@using TEST.Server
+@inject HttpClient Http
+
+<h3>Faire une Vote</h3>
+
+
+<EditForm     Model="vote" OnValidSubmit="@Add">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <InputText id="Vote" @bind-Value="vote.Title" placeholder="Votre Vote" class="invoerveld" /><br><br>
+    <InputTextArea id="Commentaire" @bind-Value="vote.Content" placeholder="Commentaire" class="invoerveld" /><br><br>
+    <button type="submit" class="">Submit</button>
+</EditForm>
+
+
+@code {
+    [Parameter]
+    public string DossierId { get; set; }
+    public Vote vote = new Vote();
+
+    private async Task Add()
+    {
+
+        var res = await Http.PostAsJsonAsync("Vote/Add",vote);
+        Console.WriteLine(res);
+    }
+
+    protected override void OnInitialized ()
+    {
+        vote.DossierId =Convert.ToInt32( DossierId);
+
+    }
+
+
+}

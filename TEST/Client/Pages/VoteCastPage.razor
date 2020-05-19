@@ -1,0 +1,77 @@
+﻿@page "/voteCast/{Id}"
+@using TEST.Server
+@inject HttpClient Http
+
+<h4>Dossier</h4>
+ 
+<EditForm Model="vote" OnValidSubmit="@Add">
+    <div class="container">
+
+        <label class="checkboxContainer">
+            Je suis pour cette proposition
+            <InputCheckbox @bind-Value="pour"   />
+            <span class="checkmark"></span>
+        </label>
+
+
+        <label class="checkboxContainer">
+            Je suis contre cette proposition
+            <InputCheckbox @bind-Value="contre"    />
+            <span class="checkmark"></span>
+        </label>
+
+    </div>
+    <button type="submit" class="">Submit</button>
+</EditForm>
+
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    public Vote vote = new Vote();
+
+
+    bool _pour;
+    bool pour {
+
+        get { return _pour; }
+        set {
+            if (!_pour&& _contre) _contre = false;
+            _pour=value;
+        }
+    }
+
+
+    bool _contre;
+    bool contre
+    {
+
+        get { return _contre; }
+        set
+        {
+            if (!_contre&& _pour) _pour = false;
+            _contre = value;
+        }
+    }
+
+
+    private async Task Add()
+    {
+        UserVote userVote = new UserVote();
+        userVote.VotedFor = true;// (pour ? 1 : 0);
+
+        // var res = await Http.PostAsJsonAsync("Vote/Cast", vote);
+        Console.WriteLine("contre", contre.ToString());
+        Console.WriteLine("pour", pour.ToString());
+        Console.WriteLine("pour2", "pour.ToString()");
+        Console.WriteLine(pour.ToString());
+    }
+
+    protected override void OnInitialized()
+    {
+        vote.Id = Convert.ToInt32(Id);
+
+    }
+
+
+}

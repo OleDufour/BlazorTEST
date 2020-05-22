@@ -37,10 +37,10 @@ namespace TEST.Server.Controllers
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
-        public Dossier GetDossier(int id)
+        public async Task<IActionResult> GetDossier(int id)
         {
-            Dossier d = _context.Dossier.Include(b => b.Vote).Where(x => x.Id == id).Single();//.Select(x => x);
-            return d;
+            Dossier d = await _context.Dossier.Include(b => b.Vote).Where(x => x.Id == id).SingleAsync();//.Select(x => x);
+            return Ok(d);
         }
 
 

@@ -13,7 +13,7 @@ namespace TEST.Server.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
-    public class VoteController :MonConciergeControllerBase
+    public class VoteController : ControllerBase
     {
         private readonly MonConciergeContext _context;
 
@@ -47,17 +47,10 @@ namespace TEST.Server.Controllers
             ClaimsPrincipal currentUser = this.User;
             var currentUserID = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-
             _context.Add(proposition);
             proposition.CreationDate = DateTime.Now;
             proposition.UserId = currentUserID;
-
-
-
-
-
             await _context.SaveChangesAsync();
-            //      return NoContent();
             return Ok(response);
         }
 

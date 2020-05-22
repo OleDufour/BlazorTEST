@@ -1,34 +1,51 @@
-﻿ @page "/voteAdd/{DossierId}"
+﻿@page "/voteAdd/{DossierId}"
 @using TEST.Server
 @inject HttpClient Http
 
-<h3>Faire une Vote</h3>
+<h3>Faire une proposition pour le dossier '@dossier.Title'</h3>
 
+<div class="row">
+    <div class="col-8">
+        <div class="form-group">
+            <EditForm Model="vote" OnValidSubmit="@Add">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
 
-<EditForm     Model="vote" OnValidSubmit="@Add">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    <InputText id="Vote" @bind-Value="vote.Title" placeholder="Votre Vote" class="invoerveld" /><br><br>
-    <InputTextArea id="Commentaire" @bind-Value="vote.Content" placeholder="Commentaire" class="invoerveld" /><br><br>
-    <button type="submit" class="">Submit</button>
-</EditForm>
+                <div class="form-group">
+                    <InputText id="Vote" @bind-Value="vote.UserId" placeholder="Votre proposition" class="form-control" />
+                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                </div>
+
+                <InputText id="Vote" @bind-Value="vote.Title" placeholder="Votre proposition" class="form-control" /><br><br>
+                <InputTextArea id="Commentaire" @bind-Value="vote.Content" placeholder="Commentaire" class="invoerveld" /><br><br>
+                <button type="submit" class="">Submit</button>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
 
 
 @code {
     [Parameter]
     public string DossierId { get; set; }
+
+    Dossier dossier = new Dossier();
     public Vote vote = new Vote();
 
     private async Task Add()
     {
 
-        var res = await Http.PostAsJsonAsync("Vote/Add",vote);
+        var res = await Http.PostAsJsonAsync("Vote/Add", vote);
         Console.WriteLine(res);
     }
 
-    protected override void OnInitialized ()
+    protected override async Task OnInitializedAsync()
     {
-        vote.DossierId =Convert.ToInt32( DossierId);
+
+        dossier = await Http.GetFromJsonAsync<Dossier>($"Dossier/GetDossier/{DossierId}");
+
+        vote.DossierId = Convert.ToInt32(DossierId);
 
     }
 

@@ -4,13 +4,28 @@
 
 <h3>@dossier.Title</h3>
 
-<EditForm Model="dossier" OnValidSubmit="@Edit">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    <InputText id="Dossier" @bind-Value="dossier.Title" placeholder="Votre dossier" class="invoerveld" /><br><br>
-    <InputText id="Dossier" @bind-Value="dossier.Title" placeholder="Votre dossier" class="invoerveld" /><br><br>
-    <button type="submit" class="">Submit</button>
-</EditForm>
+
+
+
+<div class="row">
+    <div class="col-8">
+        <EditForm Model="dossier" OnValidSubmit="@Edit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <InputText id="Dossier" @bind-Value="dossier.Title" placeholder="Votre dossier" class="invoerveld" /><br><br>
+        
+            <button type="submit" class="">Submit</button>
+        </EditForm>
+    </div>
+    <div class="col-3">
+        <a href="voteAdd/@Id">Faire une proposition</a>
+    </div>
+</div>
+
+
+
+
+
 
 
 

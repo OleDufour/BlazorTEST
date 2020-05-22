@@ -13,7 +13,8 @@ using Microsoft.Extensions.Hosting;
 using System.Linq;
 using TEST.Server.Data;
 using TEST.Server.Models;
-
+using Newtonsoft.Json;
+using System.Linq;
 
 namespace TEST.Server
 {
@@ -38,7 +39,10 @@ namespace TEST.Server
 
             services.AddAuthentication().AddIdentityServerJwt();
 
-    
+            services.AddControllers().AddNewtonsoftJson(options =>
+       options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+   );
+
 
             services.AddDbContext<MonConciergeContext>();
 

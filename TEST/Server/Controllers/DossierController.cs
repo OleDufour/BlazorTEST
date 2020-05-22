@@ -39,8 +39,11 @@ namespace TEST.Server.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDossier(int id)
         {
-            Dossier d = await _context.Dossier.Include(b => b.Vote).Where(x => x.Id == id).SingleAsync();//.Select(x => x);
-            return Ok(d);
+       
+           var qq= await _context.Dossier.Include(b => b.Vote).Where(x => x.Id == id).SingleAsync();//.Select(x => x);
+            return Ok(qq);
+
+
         }
 
 

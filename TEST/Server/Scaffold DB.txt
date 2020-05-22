@@ -1,6 +1,0 @@
-﻿dotnet ef dbcontext scaffold "Data Source=SIULAAGPAR001\SQLEXPRESS;Initial Catalog=MonConcierge;Integrated Security=True"  Microsoft.EntityFrameworkCore.SqlServer -o C:\Users\extodufour\source\repos\TEST\TEST\Shared\DBModels 
-
-
-
-ole2@abc.comm
-lback%3Fclient_id

@@ -1,0 +1,96 @@
+﻿USE [MonConcierge]
+GO
+/****** Object:  Table [dbo].[Discussion]    Script Date: 22/05/2020 15:36:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Discussion](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[UserID] [int] NOT NULL,
+	[Content] [varchar](250) NOT NULL,
+	[VoteID] [int] NOT NULL,
+ CONSTRAINT [PK_Discussion] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Dossier]    Script Date: 22/05/2020 15:36:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Dossier](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[Title] [varchar](200) NOT NULL,
+	[CreationDate] [datetime] NOT NULL,
+	[UserID] [nvarchar](450) NOT NULL,
+ CONSTRAINT [PK_Dossier] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[User_Vote]    Script Date: 22/05/2020 15:36:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[User_Vote](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[VoteID] [int] NOT NULL,
+	[VotedFor] [bit] NOT NULL,
+	[VotedDate] [datetime] NOT NULL,
+	[Comment] [varchar](200) NULL,
+	[UserID] [nvarchar](450) NULL,
+ CONSTRAINT [PK_User_Vote] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Vote]    Script Date: 22/05/2020 15:36:42 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Vote](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[CreationDate] [datetime] NOT NULL,
+	[Title] [nvarchar](100) NOT NULL,
+	[Content] [varchar](450) NOT NULL,
+	[UserID] [nvarchar](450) NOT NULL,
+	[ClosedDate] [datetime] NULL,
+	[DossierID] [int] NOT NULL,
+ CONSTRAINT [PK_Vote] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Discussion]  WITH CHECK ADD  CONSTRAINT [FK_Discussion_User_Vote] FOREIGN KEY([UserID])
+REFERENCES [dbo].[User_Vote] ([ID])
+GO
+ALTER TABLE [dbo].[Discussion] CHECK CONSTRAINT [FK_Discussion_User_Vote]
+GO
+ALTER TABLE [dbo].[Dossier]  WITH CHECK ADD  CONSTRAINT [UC_Dossier_AspNetUsers] FOREIGN KEY([UserID])
+REFERENCES [dbo].[AspNetUsers] ([Id])
+GO
+ALTER TABLE [dbo].[Dossier] CHECK CONSTRAINT [UC_Dossier_AspNetUsers]
+GO
+ALTER TABLE [dbo].[User_Vote]  WITH CHECK ADD  CONSTRAINT [UC_UserVote_AspNetUsers] FOREIGN KEY([UserID])
+REFERENCES [dbo].[AspNetUsers] ([Id])
+GO
+ALTER TABLE [dbo].[User_Vote] CHECK CONSTRAINT [UC_UserVote_AspNetUsers]
+GO
+ALTER TABLE [dbo].[Vote]  WITH CHECK ADD  CONSTRAINT [FK_Vote_Dossier] FOREIGN KEY([DossierID])
+REFERENCES [dbo].[Dossier] ([ID])
+GO
+ALTER TABLE [dbo].[Vote] CHECK CONSTRAINT [FK_Vote_Dossier]
+GO
+ALTER TABLE [dbo].[Vote]  WITH CHECK ADD  CONSTRAINT [UC_Vote_AspNetUsers] FOREIGN KEY([UserID])
+REFERENCES [dbo].[AspNetUsers] ([Id])
+GO
+ALTER TABLE [dbo].[Vote] CHECK CONSTRAINT [UC_Vote_AspNetUsers]
+GO

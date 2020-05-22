@@ -15,8 +15,17 @@ namespace TEST.Server
         {
         }
 
+        public virtual DbSet<AspNetRoleClaims> AspNetRoleClaims { get; set; }
+        public virtual DbSet<AspNetRoles> AspNetRoles { get; set; }
+        public virtual DbSet<AspNetUserClaims> AspNetUserClaims { get; set; }
+        public virtual DbSet<AspNetUserLogins> AspNetUserLogins { get; set; }
+        public virtual DbSet<AspNetUserRoles> AspNetUserRoles { get; set; }
+        public virtual DbSet<AspNetUserTokens> AspNetUserTokens { get; set; }
+        public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
+        public virtual DbSet<DeviceCodes> DeviceCodes { get; set; }
         public virtual DbSet<Discussion> Discussion { get; set; }
         public virtual DbSet<Dossier> Dossier { get; set; }
+        public virtual DbSet<PersistedGrants> PersistedGrants { get; set; }
         public virtual DbSet<UserVote> UserVote { get; set; }
         public virtual DbSet<Vote> Vote { get; set; }
 
@@ -31,18 +40,65 @@ namespace TEST.Server
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<AspNetRoleClaims>(entity =>
+            {
+                entity.HasIndex(e => e.RoleId);
+            });
+
+            modelBuilder.Entity<AspNetRoles>(entity =>
+            {
+                entity.HasIndex(e => e.NormalizedName)
+                    .HasName("RoleNameIndex")
+                    .IsUnique()
+                    .HasFilter("([NormalizedName] IS NOT NULL)");
+            });
+
+            modelBuilder.Entity<AspNetUserClaims>(entity =>
+            {
+                entity.HasIndex(e => e.UserId);
+            });
+
+            modelBuilder.Entity<AspNetUserLogins>(entity =>
+            {
+                entity.HasKey(e => new { e.LoginProvider, e.ProviderKey });
+
+                entity.HasIndex(e => e.UserId);
+            });
+
+            modelBuilder.Entity<AspNetUserRoles>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.RoleId });
+
+                entity.HasIndex(e => e.RoleId);
+            });
+
+            modelBuilder.Entity<AspNetUserTokens>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.LoginProvider, e.Name });
+            });
+
+            modelBuilder.Entity<AspNetUsers>(entity =>
+            {
+                entity.HasIndex(e => e.NormalizedEmail)
+                    .HasName("EmailIndex");
+
+                entity.HasIndex(e => e.NormalizedUserName)
+                    .HasName("UserNameIndex")
+                    .IsUnique()
+                    .HasFilter("([NormalizedUserName] IS NOT NULL)");
+            });
+
+            modelBuilder.Entity<DeviceCodes>(entity =>
+            {
+                entity.HasIndex(e => e.DeviceCode)
+                    .IsUnique();
+
+                entity.HasIndex(e => e.Expiration);
+            });
+
             modelBuilder.Entity<Discussion>(entity =>
             {
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.Content)
-                    .IsRequired()
-                    .HasMaxLength(250)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.UserId).HasColumnName("UserID");
-
-                entity.Property(e => e.VoteId).HasColumnName("VoteID");
+                entity.Property(e => e.Content).IsUnicode(false);
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Discussion)
@@ -53,72 +109,47 @@ namespace TEST.Server
 
             modelBuilder.Entity<Dossier>(entity =>
             {
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.CreationDate).HasColumnType("datetime");
-
-                entity.Property(e => e.Title)
-                    .IsRequired()
-                    .HasMaxLength(200)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.UserId).HasColumnName("UserID");
+                entity.Property(e => e.Title).IsUnicode(false);
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Dossier)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Dossier_User_Vote");
+                    .HasConstraintName("UC_Dossier_AspNetUsers");
+            });
+
+            modelBuilder.Entity<PersistedGrants>(entity =>
+            {
+                entity.HasIndex(e => e.Expiration);
+
+                entity.HasIndex(e => new { e.SubjectId, e.ClientId, e.Type });
             });
 
             modelBuilder.Entity<UserVote>(entity =>
             {
-                entity.ToTable("User_Vote");
+                entity.Property(e => e.Comment).IsUnicode(false);
 
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.Comment)
-                    .HasMaxLength(200)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.VoteId).HasColumnName("VoteID");
-
-                entity.Property(e => e.VotedDate).HasColumnType("datetime");
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.UserVote)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("UC_UserVote_AspNetUsers");
             });
 
             modelBuilder.Entity<Vote>(entity =>
             {
-                entity.Property(e => e.Id).HasColumnName("ID");
-
-                entity.Property(e => e.ClosedDate).HasColumnType("datetime");
-
-                entity.Property(e => e.Content)
-                    .IsRequired()
-                    .HasMaxLength(450)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.CreatedByUserId).HasColumnName("CreatedByUserID");
-
-                entity.Property(e => e.CreationDate).HasColumnType("datetime");
-
-                entity.Property(e => e.DossierId).HasColumnName("DossierID");
-
-                entity.Property(e => e.Title)
-                    .IsRequired()
-                    .HasMaxLength(10)
-                    .IsFixedLength();
-
-                entity.HasOne(d => d.CreatedByUser)
-                    .WithMany(p => p.Vote)
-                    .HasForeignKey(d => d.CreatedByUserId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Vote_User_Vote");
+                entity.Property(e => e.Content).IsUnicode(false);
 
                 entity.HasOne(d => d.Dossier)
                     .WithMany(p => p.Vote)
                     .HasForeignKey(d => d.DossierId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Vote_Dossier");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Vote)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("UC_Vote_AspNetUsers");
             });
 
             OnModelCreatingPartial(modelBuilder);

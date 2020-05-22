@@ -21,6 +21,7 @@ namespace TEST.Server.Controllers
     {
         private readonly MonConciergeContext _context;
         UserManager<ApplicationUser> _userManager;
+
         public DossierController(MonConciergeContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
@@ -31,34 +32,16 @@ namespace TEST.Server.Controllers
         [HttpGet]
         public async Task<List<Dossier>> GetDossiers()
         {
-            List<Dossier> v = new List<Dossier>();
-            v.Add(new Dossier { Title="test" });
-
-            var ident = User.Identity as ClaimsIdentity;
-
-
-            ClaimsPrincipal currentUser = this.User;
-            var currentUserID = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-
-            //   var userID = ident.Claims.FirstOrDefault(c => c.Type == idClaimType)?.Value;
-
-
-            
-         //   var user =await _userManager.FindByNameAsync(HttpContext.User.Identity.Name);
-
-            //            IQueryable<Dossier> v = _context.Dossier;//.Select(x => x);
-            return v.ToList();
+            List<Dossier> v = await _context.Dossier.ToListAsync();
+            return v;
         }
 
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
         public Dossier GetDossier(int id)
         {
-
             Dossier d = _context.Dossier.Include(b => b.Vote).Where(x => x.Id == id).Single();//.Select(x => x);
             return d;
-
         }
 
 
@@ -67,12 +50,15 @@ namespace TEST.Server.Controllers
         public async Task<IActionResult> Add(Dossier dossier)
         {
             var response = new ResponseSingle<int>();
+            ClaimsPrincipal currentUser = this.User;
+            var currentUserID = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
+
             dossier.CreationDate = DateTime.Now;
-            dossier.UserId = 123;
+            dossier.UserId = currentUserID;
+
             _context.Add(dossier);
 
-            await _context.SaveChangesAsync();
-            //      return NoContent();
+            await _context.SaveChangesAsync();      
             return Ok(response);
         }
 

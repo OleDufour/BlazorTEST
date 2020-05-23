@@ -31,10 +31,11 @@
     public string DossierId { get; set; }
 
     Dossier dossier = new Dossier();
-    public Vote vote = new Vote();
+    public Proposition vote = new Proposition();
 
     private async Task Add()
     {
+        vote.DossierId = Convert.ToInt32(DossierId);
 
         var res = await Http.PostAsJsonAsync("Vote/Add", vote);
         Console.WriteLine(res);

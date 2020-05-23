@@ -19,7 +19,7 @@ namespace TEST.Server
         public int VoteId { get; set; }
 
         [ForeignKey(nameof(UserId))]
-        [InverseProperty(nameof(UserVote.Discussion))]
-        public virtual UserVote User { get; set; }
+        [InverseProperty(nameof(VoteCasted.Discussion))]
+        public virtual VoteCasted User { get; set; }
     }
 }

@@ -17,7 +17,7 @@
         <ul class="list-group">
             @foreach (var d in dossiers)
             {
-                <li>  <a href="/dossierModifier/@d.Id" class="list-group-item">@d.Title, @d.CreationDate.ToString("dd/MM/yyyy"), par Ole Dufour</a></li>
+                <li>  <a href="/dossierEdit/@d.Id" class="list-group-item">@d.Title, @d.CreationDate.ToString("dd/MM/yyyy"),par Ole Dufour</a></li>
             }
         </ul>
     </div>

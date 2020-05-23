@@ -5,8 +5,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TEST.Server
 {
-    public partial class Vote
+    public partial class Proposition
     {
+        public Proposition()
+        {
+            VoteCasted = new HashSet<VoteCasted>();
+        }
+
         [Key]
         [Column("ID")]
         public int Id { get; set; }
@@ -28,10 +33,12 @@ namespace TEST.Server
         public int DossierId { get; set; }
 
         [ForeignKey(nameof(DossierId))]
-        [InverseProperty("Vote")]
+        [InverseProperty("Proposition")]
         public virtual Dossier Dossier { get; set; }
         [ForeignKey(nameof(UserId))]
-        [InverseProperty(nameof(AspNetUsers.Vote))]
+        [InverseProperty(nameof(AspNetUsers.Proposition))]
         public virtual AspNetUsers User { get; set; }
+        [InverseProperty("Proposition")]
+        public virtual ICollection<VoteCasted> VoteCasted { get; set; }
     }
 }

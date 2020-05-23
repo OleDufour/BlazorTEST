@@ -1,22 +1,28 @@
-﻿@page "/voteCast/{Id}"
+﻿@page "/voteCast/{propositionId}"
 @using TEST.Server
+@using TEST.Shared
+@inject Microsoft.AspNetCore.Components.NavigationManager NavigationManager;
 @inject HttpClient Http
 
-<h4>Dossier</h4>
- 
-<EditForm Model="vote" OnValidSubmit="@Add">
+
+<h4>La proposition '@proposition?.Title' du dossier @proposition?.Dossier?.Title    </h4>
+
+
+<EditForm Model="voteCasted" OnValidSubmit="@Add">
     <div class="container">
+
+        @*<InputText id="Dossier" style="display:none;" disabled="disabled" @bind-Value="voteCasted." placeholder="Votre dossier" class="invoerveld" />*@
 
         <label class="checkboxContainer">
             Je suis pour cette proposition
-            <InputCheckbox @bind-Value="pour"   />
+            <InputCheckbox @bind-Value="pour" />
             <span class="checkmark"></span>
         </label>
 
 
         <label class="checkboxContainer">
             Je suis contre cette proposition
-            <InputCheckbox @bind-Value="contre"    />
+            <InputCheckbox @bind-Value="contre" />
             <span class="checkmark"></span>
         </label>
 
@@ -27,17 +33,20 @@
 
 @code {
     [Parameter]
-    public string Id { get; set; }
-    public Vote vote = new Vote();
+    public string propositionId { get; set; }
 
+    public Proposition proposition = new Proposition();
+    VoteCasted voteCasted = new VoteCasted();
 
     bool _pour;
-    bool pour {
+    bool pour
+    {
 
         get { return _pour; }
-        set {
-            if (!_pour&& _contre) _contre = false;
-            _pour=value;
+        set
+        {
+            if (!_pour && _contre) _contre = false;
+            _pour = value;
         }
     }
 
@@ -49,7 +58,7 @@
         get { return _contre; }
         set
         {
-            if (!_contre&& _pour) _pour = false;
+            if (!_contre && _pour) _pour = false;
             _contre = value;
         }
     }
@@ -57,21 +66,27 @@
 
     private async Task Add()
     {
-        UserVote userVote = new UserVote();
-        userVote.VotedFor = true;// (pour ? 1 : 0);
-
         // var res = await Http.PostAsJsonAsync("Vote/Cast", vote);
         Console.WriteLine("contre", contre.ToString());
         Console.WriteLine("pour", pour.ToString());
         Console.WriteLine("pour2", "pour.ToString()");
         Console.WriteLine(pour.ToString());
+
+        voteCasted.VotedFor = pour;
+        voteCasted.PropositionId = Convert.ToInt32(propositionId);
+
+        var res = await Http.PostAsJsonAsync("Vote/Cast", voteCasted);
+        Console.WriteLine(res);
+
+
+        NavigationManager.NavigateTo("voteCastResult/");
     }
 
-    protected override void OnInitialized()
+
+    protected override async Task OnInitializedAsync()
     {
-        vote.Id = Convert.ToInt32(Id);
-
+        Response<Proposition> response = await Http.GetFromJsonAsync<Response<Proposition>>($"Vote/GetProposition/{propositionId}");
+        proposition = response.Data;
     }
-
 
 }

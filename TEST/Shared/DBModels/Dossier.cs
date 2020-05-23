@@ -9,7 +9,7 @@ namespace TEST.Server
     {
         public Dossier()
         {
-            Vote = new HashSet<Vote>();
+            Proposition = new HashSet<Proposition>();
         }
 
         [Key]
@@ -29,6 +29,6 @@ namespace TEST.Server
         [InverseProperty(nameof(AspNetUsers.Dossier))]
         public virtual AspNetUsers User { get; set; }
         [InverseProperty("Dossier")]
-        public virtual ICollection<Vote> Vote { get; set; }
+        public virtual ICollection<Proposition> Proposition { get; set; }
     }
 }

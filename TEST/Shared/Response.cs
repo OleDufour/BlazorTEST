@@ -62,4 +62,23 @@ namespace TEST.Shared
         public string ExceptionDetail { get; set; }
         public TModel Data { get; set; }
     }
+
+    public class ResponseList<TModel> : IResponse<List<TModel>> where TModel : class
+    {
+        public ResponseList()
+        {
+        }
+
+        public string Message { get; set; }
+        public bool HasError { get; set; }
+        public string ErrorMessage { get; set; }
+        public string ExceptionDetail { get; set; }
+        /// <summary>
+        /// Data that we need in the result for subsequent queries such as collaborator details.
+        /// </summary>
+        public Dictionary<string, string> FilterValues { get; set; }
+        public List<TModel> Data { get; set; }
+    }
+
+
 }

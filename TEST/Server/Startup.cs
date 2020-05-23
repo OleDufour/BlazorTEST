@@ -13,8 +13,7 @@ using Microsoft.Extensions.Hosting;
 using System.Linq;
 using TEST.Server.Data;
 using TEST.Server.Models;
-using Newtonsoft.Json;
-using System.Linq;
+using Newtonsoft.Json;  
 
 namespace TEST.Server
 {
@@ -32,23 +31,16 @@ namespace TEST.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
-
             services.AddIdentityServer().AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
-
             services.AddAuthentication().AddIdentityServerJwt();
-
-            services.AddControllers().AddNewtonsoftJson(options =>
-       options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-   );
-
-
+            services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
             services.AddDbContext<MonConciergeContext>();
-
             services.AddControllersWithViews();
             services.AddAuthorization();
             services.AddRazorPages();
+
+            services.AddScoped<IQuery,  Query>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

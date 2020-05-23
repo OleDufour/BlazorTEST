@@ -1,0 +1,66 @@
+﻿@page "/voteCastResult/{propositionId}"
+@using TEST.Server
+@using TEST.Shared
+@inject HttpClient Http
+
+@{
+    if (votesCasted.Count > 0)
+    {
+        <h3>Le dossier @votesCasted[0]?.Proposition?.Dossier?.Title</h3>
+        <h4>La proposition @votesCasted[0]?.Proposition?.Title </h4>
+    }
+}
+
+<EditForm Model="votesCasted">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Nom</th>
+                <th scope="col">Pour</th>
+                <th scope="col">Contre</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (VoteCasted v in votesCasted)
+            {
+                <tr>
+                    <td>
+                        @v.User.Email
+                    </td>
+                    <td>
+                        @{
+                            if (v.VotedFor)
+                            { <span>Pour</span> }
+                        }
+                    </td>
+                    <td>
+                        @{
+                            if (!v.VotedFor)
+                            { <span>Contre</span> }
+                        }
+                    </td>
+                    <td>
+                        @v.VotedDate.ToString("dd/MM/yyyy hh:mm")
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</EditForm>
+
+
+@code {
+    [Parameter]
+    public string propositionId { get; set; }
+
+
+    List<VoteCasted> votesCasted = new List<VoteCasted>();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        ResponseList<VoteCasted> response = await Http.GetFromJsonAsync<ResponseList<VoteCasted>>($"Vote/GetVotesCasted/{propositionId}");
+        votesCasted = response.Data;
+    }
+}

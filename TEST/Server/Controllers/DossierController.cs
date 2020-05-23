@@ -30,7 +30,7 @@ namespace TEST.Server.Controllers
         // GET: api/<ValuesController>
         [HttpGet]
         public async Task<List<Dossier>> GetDossiers()
-        {
+        { 
             List<Dossier> v = await _context.Dossier.ToListAsync();
             return v;
         }
@@ -38,12 +38,9 @@ namespace TEST.Server.Controllers
         // GET api/<ValuesController>/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDossier(int id)
-        {
-       
-           var qq= await _context.Dossier.Include(b => b.Vote).Where(x => x.Id == id).SingleAsync();//.Select(x => x);
+        {      
+            var qq = await _context.Dossier.Include(b => b.Proposition).ThenInclude(b => b.VoteCasted).Where(x => x.Id == id).SingleAsync();//.Select(x => x);
             return Ok(qq);
-
-
         }
 
 

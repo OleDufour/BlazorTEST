@@ -14,8 +14,8 @@ namespace TEST.Server
             AspNetUserRoles = new HashSet<AspNetUserRoles>();
             AspNetUserTokens = new HashSet<AspNetUserTokens>();
             Dossier = new HashSet<Dossier>();
-            UserVote = new HashSet<UserVote>();
-            Vote = new HashSet<Vote>();
+            Proposition = new HashSet<Proposition>();
+            VoteCasted = new HashSet<VoteCasted>();
         }
 
         [Key]
@@ -50,8 +50,8 @@ namespace TEST.Server
         [InverseProperty("User")]
         public virtual ICollection<Dossier> Dossier { get; set; }
         [InverseProperty("User")]
-        public virtual ICollection<UserVote> UserVote { get; set; }
+        public virtual ICollection<Proposition> Proposition { get; set; }
         [InverseProperty("User")]
-        public virtual ICollection<Vote> Vote { get; set; }
+        public virtual ICollection<VoteCasted> VoteCasted { get; set; }
     }
 }

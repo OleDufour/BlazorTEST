@@ -26,8 +26,8 @@ namespace TEST.Server
         public virtual DbSet<Discussion> Discussion { get; set; }
         public virtual DbSet<Dossier> Dossier { get; set; }
         public virtual DbSet<PersistedGrants> PersistedGrants { get; set; }
-        public virtual DbSet<UserVote> UserVote { get; set; }
-        public virtual DbSet<Vote> Vote { get; set; }
+        public virtual DbSet<Proposition> Proposition { get; set; }
+        public virtual DbSet<VoteCasted> VoteCasted { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -125,31 +125,37 @@ namespace TEST.Server
                 entity.HasIndex(e => new { e.SubjectId, e.ClientId, e.Type });
             });
 
-            modelBuilder.Entity<UserVote>(entity =>
-            {
-                entity.Property(e => e.Comment).IsUnicode(false);
-
-                entity.HasOne(d => d.User)
-                    .WithMany(p => p.UserVote)
-                    .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("UC_UserVote_AspNetUsers");
-            });
-
-            modelBuilder.Entity<Vote>(entity =>
+            modelBuilder.Entity<Proposition>(entity =>
             {
                 entity.Property(e => e.Content).IsUnicode(false);
 
                 entity.HasOne(d => d.Dossier)
-                    .WithMany(p => p.Vote)
+                    .WithMany(p => p.Proposition)
                     .HasForeignKey(d => d.DossierId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Vote_Dossier");
 
                 entity.HasOne(d => d.User)
-                    .WithMany(p => p.Vote)
+                    .WithMany(p => p.Proposition)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("UC_Vote_AspNetUsers");
+            });
+
+            modelBuilder.Entity<VoteCasted>(entity =>
+            {
+                entity.Property(e => e.Comment).IsUnicode(false);
+
+                entity.HasOne(d => d.Proposition)
+                    .WithMany(p => p.VoteCasted)
+                    .HasForeignKey(d => d.PropositionId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("UC_UserVote_Vote");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.VoteCasted)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("UC_UserVote_AspNetUsers");
             });
 
             OnModelCreatingPartial(modelBuilder);

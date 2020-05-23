@@ -5,10 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TEST.Server
 {
-    [Table("User_Vote")]
-    public partial class UserVote
+    public partial class VoteCasted
     {
-        public UserVote()
+        public VoteCasted()
         {
             Discussion = new HashSet<Discussion>();
         }
@@ -16,8 +15,8 @@ namespace TEST.Server
         [Key]
         [Column("ID")]
         public int Id { get; set; }
-        [Column("VoteID")]
-        public int VoteId { get; set; }
+        [Column("PropositionID")]
+        public int PropositionId { get; set; }
         public bool VotedFor { get; set; }
         [Column(TypeName = "datetime")]
         public DateTime VotedDate { get; set; }
@@ -27,8 +26,11 @@ namespace TEST.Server
         [StringLength(450)]
         public string UserId { get; set; }
 
+        [ForeignKey(nameof(PropositionId))]
+        [InverseProperty("VoteCasted")]
+        public virtual Proposition Proposition { get; set; }
         [ForeignKey(nameof(UserId))]
-        [InverseProperty(nameof(AspNetUsers.UserVote))]
+        [InverseProperty(nameof(AspNetUsers.VoteCasted))]
         public virtual AspNetUsers User { get; set; }
         [InverseProperty("User")]
         public virtual ICollection<Discussion> Discussion { get; set; }

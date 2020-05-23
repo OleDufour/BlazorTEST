@@ -1,49 +1,46 @@
-﻿@page "/dossierDetail/{Id}"
+﻿@page "/dossierEdit/{Id}"
 @using TEST.Server
 @inject HttpClient Http
 
-<h3>Dossier @dossier.Title, créé par @dossier.User.Email</h3>
-
-
-
-
+<h3>Dossier @dossier.Title, créé par </h3>
+ 
 <div class="row">
     <div class="col-8">
         <EditForm Model="dossier" OnValidSubmit="@Edit">
             <DataAnnotationsValidator />
             <ValidationSummary />
             @*<InputText id="Dossier" disabled="disabled" @bind-Value="dossier.Title" placeholder="Votre dossier" class="invoerveld" /><br><br>*@
-        
+
             <button type="submit" class="">Submit</button>
         </EditForm>
     </div>
     <div class="col-3">
-        <a href="PropositionAdd/@Id">Faire une proposition</a>
+        <a href="voteAdd/@Id">Faire une proposition</a>
     </div>
 </div>
 
 <div class="list-group">
-    @foreach (Proposition v in dossier.Proposition)
-    {
-        <a href="/PropositionCast/@v.Id">@v.Title</a>
+    @if (dossier.Proposition != null)
+        @foreach (Proposition v in dossier.Proposition)
+        {
+            <a href="/voteCast/@v.Id">@v.Title </a>
 
-    }
+        }
 </div>
 
 @code {
     [Parameter]
     public string Id { get; set; }
     public Dossier dossier = new Dossier();
-    public Proposition proposition = new Proposition();
+  
     protected override async Task OnInitializedAsync()
     {
         dossier = await Http.GetFromJsonAsync<Dossier>($"Dossier/GetDossier/{Id}");
     }
+
     private async Task Edit()
     {
-
         var res = await Http.PostAsJsonAsync("Dossier/Edit", dossier);
-
     }
 
 }

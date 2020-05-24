@@ -83,8 +83,8 @@
         var res = await Http.PostAsJsonAsync("Proposition/Cast", voteCasted);
         Console.WriteLine(res);
 
-
-        NavigationManager.NavigateTo($"voteCastResult/{propositionId}");
+        int dossierID = proposition.Dossier.Id;
+        NavigationManager.NavigateTo($"dossierDetail/{dossierID}");
     }
 
 

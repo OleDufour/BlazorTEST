@@ -23,7 +23,7 @@
                     <InputTextArea id="Commentaire" @bind-Value="vote.Content" placeholder="Commentaire" class="form-control" />
                     <small id="emailHelp" class="form-text text-muted">Plus d'informations sur votre proposition</small>
                 </div>
-                <button type="submit" class="btn-primary">Valider</button>
+                <button type="submit" disabled="@submitDisabled"  class="btn btn-primary">Valider</button>
             </EditForm>
         </div>
     </div>
@@ -37,7 +37,15 @@
 
     Dossier dossier = new Dossier();
     public Proposition vote = new Proposition();
+    bool submitDisabled = true;
 
+    protected override async Task OnInitializedAsync()
+    {
+        vote.UserId = "abc";
+        dossier = await Http.GetFromJsonAsync<Dossier>($"Dossier/GetDossier/{DossierId}");
+
+        vote.DossierId = Convert.ToInt32(DossierId);
+    }
 
     private async Task CreateProposition()
     {
@@ -46,17 +54,25 @@
         var res = await Http.PostAsJsonAsync("Proposition/CreateProposition", vote);
         Console.WriteLine(res);
 
-        NavigationManager.NavigateTo($"voteCastResult/dossierDetail/{DossierId}");
+        NavigationManager.NavigateTo($"/dossierDetail/{DossierId}");
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        vote.UserId = "abc";
-        dossier = await Http.GetFromJsonAsync<Dossier>($"Dossier/GetDossier/{DossierId}");
 
-        vote.DossierId = Convert.ToInt32(DossierId);
+    // TODO validate button
 
-    }
+    //bool _pour;
+    //bool pour
+    //{
+
+    //    get { return _pour; }
+    //    set
+    //    {
+    //        if (!_pour && _contre) _contre = false;
+    //        _pour = value;
+    //        submitDisabled = !_pour && !_contre ? true : false;
+    //    }
+    //}
+
 
 
 }

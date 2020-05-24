@@ -48,11 +48,18 @@ a, .btn-link {
     color: #0366d6;
 }
 
-.btn-primary {
+/*.btn-primary {
     color: #fff;
     background-color: #1b6ec2;
     border-color: #1861ac;
+}*/
+
+button:disabled {
+    cursor: not-allowed;
+    pointer-events: all !important;
 }
+
+
 
 app {
     position: relative;

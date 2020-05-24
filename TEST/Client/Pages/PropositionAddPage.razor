@@ -16,17 +16,17 @@
                 <InputText id="Vote" style="visibility: hidden;" @bind-Value="vote.UserId" placeholder="UserId" class="form-control" />
 
                 <div class="form-group">
-                    <InputText id="Vote" @bind-Value="vote.Title" placeholder="Votre proposition" class="form-control" />
+                    <InputText id="Vote" @bind-Value="vote.Title" @oninput="SetSubmitDisabled" placeholder="Votre proposition" class="form-control" />
                     <small id="emailHelp" class="form-text text-muted">Saissez une déscription brève de votre proposition</small>
                 </div>
                 <div class="form-group">
                     <InputTextArea id="Commentaire" @bind-Value="vote.Content" placeholder="Commentaire" class="form-control" />
                     <small id="emailHelp" class="form-text text-muted">Plus d'informations sur votre proposition</small>
                 </div>
-                <button type="submit" disabled="@submitDisabled"  class="btn btn-primary">Valider</button>
+                <button type="submit" disabled="@submitDisabled" class="btn btn-primary">Valider</button>
             </EditForm>
         </div>
-    </div>  
+    </div>
 </div>
 
 
@@ -58,21 +58,9 @@
     }
 
 
-    // TODO validate button
-
-    //bool _pour;
-    //bool pour
-    //{
-
-    //    get { return _pour; }
-    //    set
-    //    {
-    //        if (!_pour && _contre) _contre = false;
-    //        _pour = value;
-    //        submitDisabled = !_pour && !_contre ? true : false;
-    //    }
-    //}
-
-
-
+    void SetSubmitDisabled(ChangeEventArgs e)
+    {
+        Console.WriteLine(e.Value);
+        submitDisabled = e.Value.ToString() == string.Empty? true : false;
+    }
 }

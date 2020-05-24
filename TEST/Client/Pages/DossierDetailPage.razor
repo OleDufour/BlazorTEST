@@ -18,27 +18,29 @@
             <thead>
                 <tr>
                     <th scope="col">Nom</th>
-                    <th scope="col"></th>
-                    <th scope="col">Résultat</th>
+                    <th scope="col"></th>                  
+                    <th scope="col">Votes pour</th>
+                    <th scope="col">Votes contre</th>
                     <th scope="col">Expiration</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (Proposition v in dossier?.Proposition)
+                @foreach (Proposition proposition in dossier?.Proposition)
                 {
-                    <tr>
-                        <td>@v.Title</td>
-                        <td>
-                            <a href="/voteCast/@v.Id">
-                                @{
-                                    if (!v.CurrentUserHasVoted)
-                                    {<span>Merci de voter</span>}
-                                }
-                            </a>
-                        </td>
-                        <td><a href="/voteCastResult/@v.Id">4 pour 2 contre</a> </td>
-                        <td></td>
-                    </tr>
+                <tr>
+                    <td><a href="/voteCastResult/@proposition.Id">@proposition.Title</a> </td>
+                    <td>
+                        <a href="/voteCast/@proposition.Id">
+                            @{
+                                if (!proposition.CurrentUserHasVoted)
+                                {<span>Merci de voter</span>}
+                            }
+                        </a>
+                    </td>
+                    <td>@proposition.VotesFor</td>
+                    <td>@proposition.VotesAgainst</td>
+                    <td></td>
+                </tr>
                 }
             </tbody>
         </table>

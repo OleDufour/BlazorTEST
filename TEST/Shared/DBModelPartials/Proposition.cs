@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace TEST.Server
 {
@@ -9,39 +7,10 @@ namespace TEST.Server
     {
         [NotMapped]
         public bool CurrentUserHasVoted { get; set; }
+        [NotMapped]
+        public int VotesFor { get { return VoteCasted.Where(x => x.VotedFor).Count(); } }
+        [NotMapped]
+        public int VotesAgainst { get { return VoteCasted.Where(x => !x.VotedFor).Count(); } }
 
-        //public Proposition()
-        //{
-        //    VoteCasted = new HashSet<VoteCasted>();
-        //}
-
-        //[Key]
-        //[Column("ID")]
-        //public int Id { get; set; }
-        //[Column(TypeName = "datetime")]
-        //public DateTime CreationDate { get; set; }
-        //[Required]
-        //[StringLength(100)]
-        //public string Title { get; set; }
-        //[Required]
-        //[StringLength(450)]
-        //public string Content { get; set; }
-        //[Required]
-        //[Column("UserID")]
-        //[StringLength(450)]
-        //public string UserId { get; set; }
-        //[Column(TypeName = "datetime")]
-        //public DateTime? ClosedDate { get; set; }
-        //[Column("DossierID")]
-        //public int DossierId { get; set; }
-
-        //[ForeignKey(nameof(DossierId))]
-        //[InverseProperty("Proposition")]
-        //public virtual Dossier Dossier { get; set; }
-        //[ForeignKey(nameof(UserId))]
-        //[InverseProperty(nameof(AspNetUsers.Proposition))]
-        //public virtual AspNetUsers User { get; set; }
-        //[InverseProperty("Proposition")]
-        //public virtual ICollection<VoteCasted> VoteCasted { get; set; }
     }
 }

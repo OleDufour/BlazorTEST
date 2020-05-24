@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -40,6 +41,8 @@ namespace TEST.Server.Controllers
         public async Task<IActionResult> GetDossier(int id)
         {      
             Dossier dossier = await _context.Dossier.Include(b => b.Proposition).ThenInclude(b => b.VoteCasted).Where(x => x.Id == id).SingleAsync();//.Select(x => x);
+            var currentUserID = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            dossier.Proposition.ToList().ForEach(x => x.CurrentUserHasVoted = x.VoteCasted.Any(x => currentUserID == x.UserId));
             return Ok(dossier);
         }
 

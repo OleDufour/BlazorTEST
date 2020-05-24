@@ -1,9 +1,16 @@
 ﻿@page "/dossierDetail/{Id}"
 @using TEST.Server
 @inject HttpClient Http
-
 <h1>Dossier @dossier.Title, créé par  @dossier?.User?.Email  </h1>
-<h2>Propositions</h2>
+<div class="row">
+
+    <div class="col-7">
+        <h2>Propositions</h2>
+    </div>
+    <div class="col-1">
+        <a href="propositionAdd/@Id">Faire une proposition</a>
+    </div>
+</div>
 
 <div class="row">
     <div class="col-8">
@@ -16,17 +23,27 @@
                     <th scope="col">Expiration</th>
                 </tr>
             </thead>
-            <tbody>          
+            <tbody>
                 @foreach (Proposition v in dossier?.Proposition)
                 {
-                    <tr><td>@v.Title</td><td><a href="/voteCast/@v.Id">Merci de voter</a></td><td><a href="/voteCastResult/@v.Id">4 pour 2 contre</a> </td><td></td></tr>
+                    <tr>
+                        <td>@v.Title</td>
+                        <td>
+                            <a href="/voteCast/@v.Id">
+                                @{
+                                    if (!v.CurrentUserHasVoted)
+                                    {<span>Merci de voter</span>}
+                                }
+                            </a>
+                        </td>
+                        <td><a href="/voteCastResult/@v.Id">4 pour 2 contre</a> </td>
+                        <td></td>
+                    </tr>
                 }
             </tbody>
         </table>
     </div>
-    <div class="col-3">
-        <a href="propositionAdd/@Id">Faire une proposition</a>
-    </div>
+
 </div>
 @code {
     [Parameter]

@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿ using System.Linq;
+ 
 using Microsoft.EntityFrameworkCore;
 
 namespace TEST.Server
 {
 
-    public interface IQuery {
-        void test();
+    public interface IQuery
+    {
+        IQueryable<VoteCasted> GetVotesCastedByPropositionId();
     }
 
     public class Query : IQuery
@@ -21,9 +20,9 @@ namespace TEST.Server
 
         }
 
-        public void test()
+        public IQueryable<VoteCasted> GetVotesCastedByPropositionId()
         {
-          
+            return _context.VoteCasted.Include(c => c.Proposition).ThenInclude(c => c.VoteCasted).ThenInclude(c => c.User).ThenInclude(c => c.Dossier).AsQueryable();
         }
     }
 }

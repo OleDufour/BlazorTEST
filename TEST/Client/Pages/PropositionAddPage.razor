@@ -1,0 +1,62 @@
+﻿@page "/propositionAdd/{DossierId}"
+@using TEST.Server
+@inject Microsoft.AspNetCore.Components.NavigationManager NavigationManager;
+@inject HttpClient Http
+
+<h3>Faire une proposition pour le dossier '@dossier.Title'</h3>
+
+<div class="row">
+    <div class="col-8">
+        <div class="form-group">
+            <EditForm Model="vote" OnValidSubmit="@CreateProposition">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+
+                <InputText id="Vote" style="visibility: hidden;" @bind-Value="vote.UserId" placeholder="UserId" class="form-control" />
+
+                <div class="form-group">
+                    <InputText id="Vote" @bind-Value="vote.Title" placeholder="Votre proposition" class="form-control" />
+                    <small id="emailHelp" class="form-text text-muted">Saissez une déscription brève de votre proposition</small>
+                </div>
+                <div class="form-group">
+                    <InputTextArea id="Commentaire" @bind-Value="vote.Content" placeholder="Commentaire" class="form-control" />
+                    <small id="emailHelp" class="form-text text-muted">Plus d'informations sur votre proposition</small>
+                </div>
+                <button type="submit" class="btn-primary">Valider</button>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+
+
+@code {
+    [Parameter]
+    public string DossierId { get; set; }
+
+    Dossier dossier = new Dossier();
+    public Proposition vote = new Proposition();
+
+
+    private async Task CreateProposition()
+    {
+        vote.DossierId = Convert.ToInt32(DossierId);
+
+        var res = await Http.PostAsJsonAsync("Proposition/CreateProposition", vote);
+        Console.WriteLine(res);
+
+        NavigationManager.NavigateTo($"voteCastResult/dossierDetail/{DossierId}");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        vote.UserId = "abc";
+        dossier = await Http.GetFromJsonAsync<Dossier>($"Dossier/GetDossier/{DossierId}");
+
+        vote.DossierId = Convert.ToInt32(DossierId);
+
+    }
+
+
+}

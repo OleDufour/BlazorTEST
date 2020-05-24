@@ -2,48 +2,45 @@
 @using TEST.Server
 @inject HttpClient Http
 
-<h3>Dossier @dossier.Title, créé par @dossier.User.Email</h3>
-
-
-
+<h1>Dossier @dossier.Title, créé par  @dossier?.User?.Email  </h1>
+<h2>Propositions</h2>
 
 <div class="row">
     <div class="col-8">
-        <EditForm Model="dossier" OnValidSubmit="@Edit">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-            @*<InputText id="Dossier" disabled="disabled" @bind-Value="dossier.Title" placeholder="Votre dossier" class="invoerveld" /><br><br>*@
-        
-            <button type="submit" class="">Submit</button>
-        </EditForm>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Nom</th>
+                    <th scope="col"></th>
+                    <th scope="col">Résultat</th>
+                    <th scope="col">Expiration</th>
+                </tr>
+            </thead>
+            <tbody>          
+                @foreach (Proposition v in dossier?.Proposition)
+                {
+                    <tr><td>@v.Title</td><td><a href="/voteCast/@v.Id">Merci de voter</a></td><td><a href="/voteCastResult/@v.Id">4 pour 2 contre</a> </td><td></td></tr>
+                }
+            </tbody>
+        </table>
     </div>
     <div class="col-3">
-        <a href="PropositionAdd/@Id">Faire une proposition</a>
+        <a href="propositionAdd/@Id">Faire une proposition</a>
     </div>
 </div>
-
-<div class="list-group">
-    @foreach (Proposition v in dossier.Proposition)
-    {
-        <a href="/PropositionCast/@v.Id">@v.Title</a>
-
-    }
-</div>
-
 @code {
     [Parameter]
     public string Id { get; set; }
     public Dossier dossier = new Dossier();
-    public Proposition proposition = new Proposition();
+
     protected override async Task OnInitializedAsync()
     {
         dossier = await Http.GetFromJsonAsync<Dossier>($"Dossier/GetDossier/{Id}");
     }
+
     private async Task Edit()
     {
-
         var res = await Http.PostAsJsonAsync("Dossier/Edit", dossier);
-
     }
 
 }

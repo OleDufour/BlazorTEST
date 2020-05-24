@@ -6,20 +6,29 @@
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
 
-<h2>Dossiers</h2>
- 
+
+
 @*<SurveyPrompt Title="How is Blazor working for you?" />*@
 @*<SfDateTimePicker TValue="DateTime?" Placeholder='Select a date and time'></SfDateTimePicker>*@
 
 <div class="row">
     <div class="col-8">
-        Tous les dossiers en cours.
-        <ul class="list-group">
-            @foreach (var d in dossiers)
-            {
-                <li>  <a href="/dossierEdit/@d.Id" class="list-group-item">@d.Title, @d.CreationDate.ToString("dd/MM/yyyy"),par Ole Dufour</a></li>
-            }
-        </ul>
+        <h2>Les dossiers en cours.</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Créé par</th>
+                    <th scope="col">Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var d in dossiers)
+                {
+                    <tr><td><a href="/dossierDetail/@d.Id" >@d.Title</a></td><td> @d.CreationDate.ToString("dd/MM/yyyy")</td><td>Ole Dufour</td></tr>
+                }
+            </tbody>
+        </table>
     </div>
     <div class="col-3">
         <a href="addDossier">Créér un dossier</a>

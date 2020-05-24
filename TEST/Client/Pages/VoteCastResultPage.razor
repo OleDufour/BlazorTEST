@@ -6,8 +6,9 @@
 @{
     if (votesCasted.Count > 0)
     {
-        <h3>Le dossier @votesCasted[0]?.Proposition?.Dossier?.Title</h3>
-        <h4>La proposition @votesCasted[0]?.Proposition?.Title </h4>
+        Dossier dossier = @votesCasted[0]?.Proposition?.Dossier;
+        <h1>Le dossier <a href="/dossierDetail/@dossier?.Id">@dossier?.Title</a> </h1>
+        <h2>La proposition @votesCasted[0]?.Proposition?.Title </h2>
     }
 }
 
@@ -60,7 +61,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        ResponseList<VoteCasted> response = await Http.GetFromJsonAsync<ResponseList<VoteCasted>>($"Vote/GetVotesCasted/{propositionId}");
+        ResponseList<VoteCasted> response = await Http.GetFromJsonAsync<ResponseList<VoteCasted>>($"Proposition/GetVotesCasted/{propositionId}");
         votesCasted = response.Data;
     }
 }

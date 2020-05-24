@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -9,6 +10,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 using TEST.Shared;
+using AutoMapper.QueryableExtensions;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -18,17 +21,21 @@ namespace TEST.Server.Controllers
     [Authorize]
     [ApiController]
     [Route("[controller]/[action]")]
-    public class VoteController : ControllerBase
+    public class PropositionController : ControllerBase
     {
         private readonly MonConciergeContext _context;
         private readonly IQuery _query;
 
-        public VoteController(MonConciergeContext context, IQuery query)
+        public PropositionController(MonConciergeContext context, IQuery query)
         {
             _context = context;
             _query = query;
 
         }
+
+
+
+
 
         // GET: api/<ValuesController>
         [HttpGet]
@@ -48,6 +55,19 @@ namespace TEST.Server.Controllers
         }
 
 
+        [HttpPost]
+        //[Route("Create")]
+        public async Task<ResponseSingle<int>> CreateProposition(Proposition proposition)
+        {
+            _context.Add(proposition);
+            proposition.CreationDate = DateTime.Now;
+            proposition.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            await _context.SaveChangesAsync();
+            ResponseSingle<int> res = new ResponseSingle<int>();
+            res.Data = 1;
+            return res;
+        }
+
         /// <summary>
         /// Cast a vote for a proposition
         /// </summary>
@@ -58,7 +78,7 @@ namespace TEST.Server.Controllers
         public async Task<IActionResult> Cast(VoteCasted userVote)
         {
             var response = new ResponseSingle<int>();
-            var currentUserID = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var currentUserID = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             userVote.VotedDate = DateTime.Now;
             userVote.UserId = currentUserID;
@@ -72,11 +92,7 @@ namespace TEST.Server.Controllers
         public async Task<ResponseList<VoteCasted>> GetVotesCasted(int propositionId)
         {
             ResponseList<VoteCasted> l = new ResponseList<VoteCasted>();
-
-            _query.test();
-
-            List<VoteCasted> voteCasteds = await _context.VoteCasted.Include(c => c.Proposition).ThenInclude(c => c.VoteCasted).ThenInclude(c => c.User).Where(x => x.PropositionId == propositionId).ToListAsync();
-            l.Data = voteCasteds;
+            l.Data = await _query.GetVotesCastedByPropositionId().Where(u => u.PropositionId == propositionId).ToListAsync();
             return l;
         }
 

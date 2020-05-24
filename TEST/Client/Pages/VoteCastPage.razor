@@ -5,7 +5,9 @@
 @inject HttpClient Http
 
 
-<h4>La proposition '@proposition?.Title' du dossier @proposition?.Dossier?.Title    </h4>
+<h1>Le dossier  <a href="/dossierDetail/@proposition?.Dossier?.Id">@proposition?.Dossier?.Title</a>    </h1>
+<h2>Veuillez voter pour la proposition '@proposition?.Title'</h2>
+<br />
 
 
 <EditForm Model="voteCasted" OnValidSubmit="@Add">
@@ -14,20 +16,20 @@
         @*<InputText id="Dossier" style="display:none;" disabled="disabled" @bind-Value="voteCasted." placeholder="Votre dossier" class="invoerveld" />*@
 
         <label class="checkboxContainer">
-            Je suis pour cette proposition
+            Je vote pour cette proposition
             <InputCheckbox @bind-Value="pour" />
             <span class="checkmark"></span>
         </label>
 
 
         <label class="checkboxContainer">
-            Je suis contre cette proposition
+            Je vote contre cette proposition
             <InputCheckbox @bind-Value="contre" />
             <span class="checkmark"></span>
         </label>
 
     </div>
-    <button type="submit" class="">Submit</button>
+    <button type="submit" disabled="@submitDisabled" class="btn btn-primary">Valider</button>
 </EditForm>
 
 
@@ -37,6 +39,7 @@
 
     public Proposition proposition = new Proposition();
     VoteCasted voteCasted = new VoteCasted();
+    bool submitDisabled = true;
 
     bool _pour;
     bool pour
@@ -47,6 +50,7 @@
         {
             if (!_pour && _contre) _contre = false;
             _pour = value;
+            submitDisabled = !_pour && !_contre ?  true: false;
         }
     }
 
@@ -60,13 +64,14 @@
         {
             if (!_contre && _pour) _pour = false;
             _contre = value;
+            submitDisabled = !_pour && !_contre ? true : false;
         }
     }
 
 
     private async Task Add()
     {
-        // var res = await Http.PostAsJsonAsync("Vote/Cast", vote);
+        // var res = await Http.PostAsJsonAsync("Proposition/Cast", vote);
         Console.WriteLine("contre", contre.ToString());
         Console.WriteLine("pour", pour.ToString());
         Console.WriteLine("pour2", "pour.ToString()");
@@ -75,17 +80,17 @@
         voteCasted.VotedFor = pour;
         voteCasted.PropositionId = Convert.ToInt32(propositionId);
 
-        var res = await Http.PostAsJsonAsync("Vote/Cast", voteCasted);
+        var res = await Http.PostAsJsonAsync("Proposition/Cast", voteCasted);
         Console.WriteLine(res);
 
 
-        NavigationManager.NavigateTo("voteCastResult/");
+        NavigationManager.NavigateTo($"voteCastResult/{propositionId}");
     }
 
 
     protected override async Task OnInitializedAsync()
     {
-        Response<Proposition> response = await Http.GetFromJsonAsync<Response<Proposition>>($"Vote/GetProposition/{propositionId}");
+        Response<Proposition> response = await Http.GetFromJsonAsync<Response<Proposition>>($"Proposition/GetProposition/{propositionId}");
         proposition = response.Data;
     }
 

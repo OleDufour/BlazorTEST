@@ -3,7 +3,7 @@
 @inject Microsoft.AspNetCore.Components.NavigationManager NavigationManager;
 @inject HttpClient Http
 
-<h3>Faire une proposition pour le dossier '@dossier.Title'</h3>
+<h1>Faire une proposition pour le dossier '@dossier.Title'</h1>
 
 <div class="row">
     <div class="col-8">
@@ -13,7 +13,7 @@
                 <ValidationSummary />
 
 
-                <InputText id="Vote" style="visibility: hidden;" @bind-Value="vote.UserId" placeholder="UserId" class="form-control" />
+                <InputText id="Vote" style="visibility: hidden;height:1px;width:1px;" @bind-Value="vote.UserId" placeholder="UserId" class="form-control" />
 
                 <div class="form-group">
                     <InputText id="Vote" @bind-Value="vote.Title" @oninput="SetSubmitDisabled" placeholder="Votre proposition" class="form-control" />

@@ -20,7 +20,7 @@ namespace TEST.Server
         [Required]
         [StringLength(100)]
         public string Title { get; set; }
-        [Required]
+       
         [StringLength(450)]
         public string Content { get; set; }
         [Required]

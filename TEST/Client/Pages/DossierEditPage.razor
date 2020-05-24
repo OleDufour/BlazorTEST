@@ -9,23 +9,16 @@
         <EditForm Model="dossier" OnValidSubmit="@Edit">
             <DataAnnotationsValidator />
             <ValidationSummary />
-            @*<InputText id="Dossier" disabled="disabled" @bind-Value="dossier.Title" placeholder="Votre dossier" class="invoerveld" /><br><br>*@
-        
+            <InputText id="Dossier" disabled="disabled" @bind-Value="dossier.Title" class="invoerveld" />
+
             <button type="submit" class="">Submit</button>
         </EditForm>
     </div>
     <div class="col-3">
-        <a href="PropositionAdd/@Id">Faire une proposition</a>
     </div>
 </div>
 
-<div class="list-group">
-    @foreach (Proposition v in dossier.Proposition)
-    {
-        <a href="/PropositionCast/@v.Id">@v.Title</a>
 
-    }
-</div>
 
 @code {
     [Parameter]

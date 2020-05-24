@@ -1,5 +1,6 @@
 ﻿@page "/addDossier"
 @using TEST.Server
+@inject Microsoft.AspNetCore.Components.NavigationManager NavigationManager;
 @inject HttpClient Http
 
 <h3>Créer un dossier</h3>
@@ -8,19 +9,24 @@
 <EditForm Model="dossier" OnValidSubmit="@Add">
     <DataAnnotationsValidator />
     <ValidationSummary />
-    <InputText id="Dossier" @bind-Value="dossier.Title" placeholder="Votre dossier" class="invoerveld" /><br><br>
-
+    <div class="form-group">
+        <InputText style="visibility: hidden;" @bind-Value=" dossier.UserId" />
+        <InputText id="Dossier" @bind-Value="dossier.Title" placeholder="Votre dossier" class="form-control" />
+    </div>
     <button type="submit" class="">Submit</button>
 </EditForm>
 
 
 @code {
-    public Dossier dossier = new Dossier();
+    public Dossier dossier = new Dossier { UserId = "abc" };
+
+
     private async Task Add()
     {
-
         var res = await Http.PostAsJsonAsync("Dossier/Add", dossier);
-       
+
+        NavigationManager.NavigateTo($"/dossiers");
+
     }
 
 

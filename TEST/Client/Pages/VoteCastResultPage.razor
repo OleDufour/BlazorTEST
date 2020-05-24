@@ -18,7 +18,7 @@
         <thead>
             <tr>
                 <th scope="col">Nom</th>
-                <th scope="col">Pour</th>
+                <th scope="col">Voté...</th>
                 <th scope="col">Contre</th>
                 <th scope="col"></th>
             </tr>
@@ -34,14 +34,10 @@
                         @{
                             if (v.VotedFor)
                             { <span>Pour</span> }
-                        }
-                    </td>
-                    <td>
-                        @{
-                            if (!v.VotedFor)
+                            else
                             { <span>Contre</span> }
                         }
-                    </td>
+                    </td>                
                     <td>
                         @v.VotedDate.ToString("dd/MM/yyyy hh:mm")
                     </td>

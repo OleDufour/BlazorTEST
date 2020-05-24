@@ -25,7 +25,7 @@
             <tbody>
                 @foreach (var d in dossiers)
                 {
-                    <tr><td><a href="/dossierDetail/@d.Id" >@d.Title</a></td><td> @d.CreationDate.ToString("dd/MM/yyyy")</td><td>Ole Dufour</td></tr>
+                    <tr><td><a href="/dossierDetail/@d.Id" >@d.Title</a></td><td>Ole Dufour</td><td> @d.CreationDate.ToString("dd/MM/yyyy")</td></tr>
                 }
             </tbody>
         </table>

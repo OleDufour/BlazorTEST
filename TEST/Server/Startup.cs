@@ -32,15 +32,12 @@ namespace TEST.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-
-            // pour tester
-            //string cs = Configuration.GetConnectionString("DefaultConnection");
+            string cs = Configuration.GetConnectionString("DefaultConnection");
+            // pour tester :
             //using (SqlConnection cn = new SqlConnection(cs))
             //{ 
             //    cn.Open();
-                
             //}
-
             services.AddDbContext<MonConciergeContext>(options => options.UseSqlServer(cs));
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(cs));
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();

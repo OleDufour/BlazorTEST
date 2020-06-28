@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+
+using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -33,8 +35,10 @@ namespace TEST.Server
         {
             if (!optionsBuilder.IsConfigured)
             {
+                //string cs = Microsoft.Extensions.Configuration.con  Configuration.GetConnectionString("DefaultConnection");
+
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Data Source=SIULAAGPAR001\\SQLEXPRESS;Initial Catalog=MonConcierge;Integrated Security=True");
+                optionsBuilder.UseSqlServer("cs");
             }
         }
 

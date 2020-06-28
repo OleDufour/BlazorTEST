@@ -15,6 +15,7 @@ using TEST.Server.Data;
 using TEST.Server.Models;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Data.SqlClient;
 
 namespace TEST.Server
 {
@@ -31,9 +32,23 @@ namespace TEST.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            // pour tester
+            //string cs = Configuration.GetConnectionString("DefaultConnection");
+            //using (SqlConnection cn = new SqlConnection(cs))
+            //{ 
+            //    cn.Open();
+                
+            //}
+
+            services.AddDbContext<MonConciergeContext>(options => options.UseSqlServer(cs));
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(cs));
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddIdentityServer().AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+            var identityServerBuilder = services.AddIdentityServer().AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+            identityServerBuilder.AddDeveloperSigningCredential();
+
+
+            // .LoadSigningCredentialFrom(Configuration["certificates:signing"]);
             services.AddAuthentication().AddIdentityServerJwt();
             services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
             services.AddDbContext<MonConciergeContext>();
@@ -41,7 +56,7 @@ namespace TEST.Server
             services.AddAuthorization();
             services.AddRazorPages();
 
-            services.AddScoped<IQuery,  Query>();
+            services.AddScoped<IQuery, Query>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -74,7 +89,10 @@ namespace TEST.Server
             app.UseRouting();
 
             app.UseIdentityServer();
+
             app.UseAuthentication();
+
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

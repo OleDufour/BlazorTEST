@@ -16,6 +16,9 @@ using TEST.Server.Models;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Data.SqlClient;
+using System.Security.Cryptography.X509Certificates;
+using System;
+using System.IO;
 
 namespace TEST.Server
 {
@@ -40,13 +43,61 @@ namespace TEST.Server
             //}
             services.AddDbContext<MonConciergeContext>(options => options.UseSqlServer(cs));
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(cs));
-            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddDefaultIdentity<ApplicationUser>().AddEntityFrameworkStores<ApplicationDbContext>();
             var identityServerBuilder = services.AddIdentityServer().AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
-            identityServerBuilder.AddDeveloperSigningCredential();
+            //  identityServerBuilder.AddDeveloperSigningCredential();
 
+
+            string env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+            Console.WriteLine("Environemnt is   " + env);
+
+
+            if (env == "Development")
+            {
+                try
+                {
+                    Console.WriteLine("Size:" + new System.IO.FileInfo("IdentityServer.pfx").Length);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+
+                try
+                {
+                    Console.WriteLine("Content:" + File.ReadAllText("IdentityServer.pfx"));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+
+
+                Console.WriteLine("Environemnt is DEVELOPMENT " + env);
+                identityServerBuilder.AddDeveloperSigningCredential();
+            }
+            else
+            {
+                try
+                {
+                    Console.WriteLine("Instanciating X509Certificate2");
+                    Console.WriteLine("Content:" + File.ReadAllText("IdentityServer.pfx"));
+                    var certificate = new X509Certificate2(@"IdentityServer.pfx", "abc");
+                    Console.WriteLine("AddSigningCredential, cert friendlyname " + certificate.Issuer);
+                    identityServerBuilder.AddSigningCredential(certificate);
+                    Console.WriteLine("AddSigningCredential() done");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("******* EXCEPTION: " + ex.Message + "\n\r" + ex.StackTrace + "\n\r" + ex.InnerException);
+                }
+            }
 
             // .LoadSigningCredentialFrom(Configuration["certificates:signing"]);
+            Console.WriteLine("******* services.AddAuthentication().AddIdentityServerJwt();");
             services.AddAuthentication().AddIdentityServerJwt();
+            Console.WriteLine("******* AddControllers().AddNewtonsoftJson(options => options.Set");
             services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
             services.AddDbContext<MonConciergeContext>();
             services.AddControllersWithViews();
@@ -54,11 +105,14 @@ namespace TEST.Server
             services.AddRazorPages();
 
             services.AddScoped<IQuery, Query>();
+            Console.WriteLine("******* ConfigureServices done");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            Console.WriteLine("*******  Configure method, starting ., env + " + env.EnvironmentName);
+
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
@@ -77,19 +131,17 @@ namespace TEST.Server
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
-
+            Console.WriteLine("*******  Configure method, starting UseHttpsRedirection");
             app.UseHttpsRedirection();
+            Console.WriteLine("*******  Configure method, starting UseBlazorFrameworkFiles");
             app.UseBlazorFrameworkFiles();
+            Console.WriteLine("*******  Configure method, starting UseStaticFiles");
             app.UseStaticFiles();
-
             app.UseRouting();
-
+            Console.WriteLine("****** Configure method, calling  app.UseIdentityServer(); ...");
             app.UseIdentityServer();
-
+            Console.WriteLine("****** Configure method, calling  app.UseAuthentication(); ...");
             app.UseAuthentication();
-
-
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

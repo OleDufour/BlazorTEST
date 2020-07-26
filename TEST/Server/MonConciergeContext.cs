@@ -35,10 +35,9 @@ namespace TEST.Server
         {
             if (!optionsBuilder.IsConfigured)
             {
-                //string cs = Microsoft.Extensions.Configuration.con  Configuration.GetConnectionString("DefaultConnection");
+                 //string cs =   Configuration.GetConnectionString("DefaultConnection");
 
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("cs");
+
             }
         }
 

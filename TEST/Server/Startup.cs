@@ -19,6 +19,7 @@ using Microsoft.Data.SqlClient;
 using System.Security.Cryptography.X509Certificates;
 using System;
 using System.IO;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace TEST.Server
 {
@@ -37,10 +38,20 @@ namespace TEST.Server
         {
             string cs = Configuration.GetConnectionString("DefaultConnection");
             // pour tester :
-            //using (SqlConnection cn = new SqlConnection(cs))
-            //{ 
-            //    cn.Open();
-            //}
+            try
+            {
+                Console.WriteLine("     ******** testing connection");
+                using (SqlConnection cn = new SqlConnection(cs))
+                {
+                    cn.Open();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message + " " + ex.StackTrace + "  " + ex.InnerException);
+
+            }
+
             services.AddDbContext<MonConciergeContext>(options => options.UseSqlServer(cs));
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(cs));
             services.AddDefaultIdentity<ApplicationUser>().AddEntityFrameworkStores<ApplicationDbContext>();
@@ -81,7 +92,7 @@ namespace TEST.Server
             {
                 try
                 {
-                    Console.WriteLine("Instanciating X509Certificate2");
+                    Console.WriteLine("Instanciating X509Certificate2, reading all text from identityserver");
                     Console.WriteLine("Content:" + File.ReadAllText("IdentityServer.pfx"));
                     var certificate = new X509Certificate2(@"IdentityServer.pfx", "abc");
                     Console.WriteLine("AddSigningCredential, cert friendlyname " + certificate.Issuer);
@@ -103,6 +114,13 @@ namespace TEST.Server
             services.AddControllersWithViews();
             services.AddAuthorization();
             services.AddRazorPages();
+
+            //services.AddDataProtection()
+            // .PersistKeysToFileSystem(new System.IO.DirectoryInfo(@"/var/my-af-keys/"));
+            //services.AddDataProtection()
+            //    .SetApplicationName("fow-customer-portal")
+            //    .PersistKeysToFileSystem(new System.IO.DirectoryInfo(@"/var/dpkeys/"));
+
 
             services.AddScoped<IQuery, Query>();
             Console.WriteLine("******* ConfigureServices done");
@@ -139,6 +157,11 @@ namespace TEST.Server
             app.UseStaticFiles();
             app.UseRouting();
             Console.WriteLine("****** Configure method, calling  app.UseIdentityServer(); ...");
+
+            //    string s = File.ReadAllText(@"C:\OLE\Projecten\BlazorTestApp\TEST\Server\appsettings.json");
+            //            Rootobject account = JsonConvert.DeserializeObject<Rootobject>(s);
+
+
             app.UseIdentityServer();
             Console.WriteLine("****** Configure method, calling  app.UseAuthentication(); ...");
             app.UseAuthentication();
